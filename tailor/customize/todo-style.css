@@ -1,0 +1,40 @@
+@CHARSET "ISO-8859-1";
+
+.container, .containerTwo {
+    margin:5px 5px 20px 5px;
+    padding:5px;
+    border:1px solid #000;
+    float:left;
+    clear:both;
+    height:auto;
+    width:600px;
+}
+.header {
+    margin:5px;
+    padding:5px;
+    background-color:#666;
+    color:#FFF;
+}
+.dvdlist li {
+    display:inline-block;
+    border:1px solid #000;
+    cursor:move;
+    color: #222;
+    margin: 3px 3px 3px 0;
+    padding: 5px;
+    width: auto;
+    height: auto;
+    font-size: 12px;
+    text-align: center;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background-color: #FDFCE8; 
+}
+
+.fl {float:left;}
+
+#trash.ui-state-highlight{border:1px dashed #e45353 !important; background-color: #f48a8a !important; color: #aaa; width: 668px !important; height:inherit !important;}
+ul#trash li.ui-state-highlight{border:1px dashed #aaa !important; background-color:green !important; color: #aaa; width: 668px !important; height:inherit !important;}
+.containerTwo .ui-state-highlight{border:1px dashed #aaa !important; background-color:green !important; color: #aaa; width: 668px !important; height:inherit !important;}
+
+.containerTwo.custom-state-active{border:1px dashed #aaa !important; background-color:green !important; color: #aaa; width: 668px !important; height:inherit !important;}

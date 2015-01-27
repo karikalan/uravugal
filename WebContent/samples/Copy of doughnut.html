@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<title>Doughnut Chart</title>
+<script src="../script/Chart.js"></script>
+<style>
+body {
+	padding: 0;
+	margin: 0;
+}
+
+#canvas-holder {
+	width: 30%;
+}
+</style>
+</head>
+<body>
+	<table>
+		<tr>
+			<td><time contenteditable="true"></time> <label>Chart
+					Display</label> <select>
+					<option>Bar</option>
+					<option>Line</option>
+					<option>DoughNut</option>
+					<option>Bar</option>
+					<option>Bar</option>
+			</select>
+				<button>Refresh</button>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div id="canvas-holder">
+					<canvas id="chart-area" width="500" height="500"></canvas>
+				</div></td>
+		</tr>
+	</table>
+
+	<script>
+		var doughnutData = [ {
+			value : 300,
+			color : "#F7464A",
+			highlight : "#FF5A5E",
+			label : "Red"
+		}, {
+			value : 50,
+			color : "#46BFBD",
+			highlight : "#5AD3D1",
+			label : "Green"
+		}, {
+			value : 100,
+			color : "#FDB45C",
+			highlight : "#FFC870",
+			label : "Yellow"
+		}, {
+			value : 40,
+			color : "#949FB1",
+			highlight : "#A8B3C5",
+			label : "Grey"
+		}, {
+			value : 120,
+			color : "#4D5360",
+			highlight : "#616774",
+			label : "Dark Grey"
+		}
+
+		];
+		/*
+		 doughnutData = [ {
+		 "color" : "#F7464A",
+		 "highlight" : "#FF5A5E",
+		 "label" : "January",
+		 "value" : 10.34
+		 }, {
+		 "color" : "#F7464A",
+		 "highlight" : "#FF5A5E",
+		 "label" : "February",
+		 "value" : 4.34
+		 } ] */
+		window.onload = function() {
+			var ctx = document.getElementById("chart-area").getContext("2d");
+			new Chart(ctx).Doughnut(doughnutData, {
+				responsive : true
+			});
+		};
+	</script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!doctype html>
+<html>
+<head>
+<title>Network | Data Manipulation</title>
+
+<style type="text/css">
+body {
+	font: 10pt sans;
+}
+
+#mynetwork {
+	position: relative;
+	width: 1000px;
+	height: 500px;
+	border: 1px solid lightgray;
+}
+
+table.legend_table {
+	font-size: 11px;
+	border-width: 1px;
+	border-color: #d3d3d3;
+	border-style: solid;
+}
+
+table.legend_table,td {
+	border-width: 1px;
+	border-color: #d3d3d3;
+	border-style: solid;
+	padding: 2px;
+}
+
+div.table_content {
+	width: 80px;
+	text-align: center;
+}
+
+div.table_description {
+	width: 100px;
+}
+
+#operation {
+	font-size: 28px;
+}
+
+#network-popUp {
+	display: none;
+	position: absolute;
+	top: 350px;
+	left: 170px;
+	z-index: 299;
+	width: 250px;
+	height: 120px;
+	background-color: #f9f9f9;
+	border-style: solid;
+	border-width: 3px;
+	border-color: #5394ed;
+	padding: 10px;
+	text-align: center;
+}
+
+#relation-popUp {
+	display: none;
+	position: absolute;
+	top: 350px;
+	left: 170px;
+	z-index: 299;
+	width: 250px;
+	height: 120px;
+	background-color: #f9f9f9;
+	border-style: solid;
+	border-width: 3px;
+	border-color: #5394ed;
+	padding: 10px;
+	text-align: center;
+}
+</style>
+<script type="text/javascript" src="../tailor/distedit/vis.js"></script>
+<link type="text/css" rel="stylesheet" href="../tailor/distedit/vis.css">
+<script type="text/javascript" src="../tailor/customize/todo-script.js"></script>
+<link type="text/css" rel="stylesheet"
+	href="../tailor/customize/todo-style.css">
+
+<!-- <script type="text/javascript"
+	src="../tailor/jquery-ui-1.11.2.custom/jquery-ui.js"></script>
+<link type="text/css" rel="stylesheet"
+	href="../tailor/jquery-ui-1.11.2.custom/jquery-ui.css">
+
+<script type="text/javascript"
+	src="../tailor/jquery-ui-1.11.2.custom/jquery-1.11.2.min.js"></script>
+ -->
+<script type="text/javascript">
+	var nodes = null;
+	var edges = null;
+	var network = null;
+
+	var dataArray = [];
+	
+	//alert(Date.now());
+
+	function draw() {
+		nodes = [];
+		edges = [];
+		var connectionCount = [];
+		
+		var person = {
+			    firstName:"John",
+			    lastName:"Doe",
+			    age:50,
+			    eyeColor:"blue"
+			};
+		
+		alert(person);
+		alert(JSON.stringify(person));
+		
+		var relation ={
+				relation :"Friend",
+				from : "birth"
+		}
+		
+		var relationShip = [relation];
+		
+		person.age=30;
+		person.dob=05011985;
+		person.relate = relationShip;
+		alert(JSON.stringify(person));
+
+		// randomly create some nodes and edges
+		var nodeCount = 25;
+		for ( var i = 0; i < nodeCount; i++) {
+			nodes.push({
+				id : i,
+				label : String(i)
+			});
+
+			connectionCount[i] = 0;
+
+			// create edges in a scale-free-network way
+			if (i == 1) {
+				var from = i;
+				var to = 0;
+				edges.push({
+					from : from,
+					to : to
+				});
+				connectionCount[from]++;
+				connectionCount[to]++;
+			} else if (i > 1) {
+				var conn = edges.length * 2;
+				var rand = Math.floor(Math.random() * conn);
+				var cum = 0;
+				var j = 0;
+				while (j < connectionCount.length && cum < rand) {
+					cum += connectionCount[j];
+					j++;
+				}
+
+				var from = i;
+				var to = j;
+				edges.push({
+					from : from,
+					to : to
+				});
+				connectionCount[from]++;
+				connectionCount[to]++;
+			}
+		}
+
+		nodes = [ {
+			"moons" : 0,
+			"label" : "Mercury",
+			"id" : 0
+		}, {
+			"moons" : 0,
+			"label" : "Venus",
+			"id" : 1
+		}, {
+			"moons" : 1,
+			"label" : "Earth",
+			"id" : 2
+		}, {
+			"moons" : 2,
+			"label" : "Mars",
+			"id" : 3
+		}, {
+			"moons" : 63,
+			"label" : "Jupiter",
+			"id" : 4
+		}, {
+			"moons" : 62,
+			"label" : "Saturn",
+			"id" : 5
+		}, {
+			"moons" : 27,
+			"label" : "Uranus",
+			"id" : 6
+		}, {
+			"moons" : 13,
+			"label" : "Neptune",
+			"id" : 7
+		}, {
+			"moons" : 0,
+			"label" : "Alfheimr",
+			"id" : 8
+		}, {
+			"moons" : 1,
+			"label" : "Midgard",
+			"id" : 9
+		}, {
+			"moons" : 2,
+			"label" : "Muspellheim",
+			"id" : 10
+		}, {
+			"moons" : 63,
+			"label" : "Asgard",
+			"id" : 11
+		}, {
+			"moons" : 62,
+			"label" : "Hel",
+			"id" : 12
+		} ];
+
+		edges = [ {
+			"id" : 0,
+			"from" : 3,
+			"to" : 2,
+			"label" : "reachable"
+		} ];
+		// create a network
+		var container = document.getElementById('mynetwork');
+		var data = {
+			nodes : nodes,
+			edges : edges
+		};
+		var options = {
+			stabilize : true,
+			dataManipulation : true,
+			onAdd : function(data, callback) {
+				var span = document.getElementById('operation');
+				var idInput = document.getElementById('node-id');
+				var labelInput = document.getElementById('node-label');
+				var nameInput = document.getElementById('node-name');
+				var saveButton = document.getElementById('saveButton');
+				var cancelButton = document.getElementById('cancelButton');
+				var div = document.getElementById('network-popUp');
+				span.innerHTML = "Add Node";
+				idInput.value = data.id;
+				labelInput.value = data.label;
+				nameInput.value = "Person";
+
+				var str = JSON.stringify(data);
+				alert("onAdd :" + data + "str :" + str);
+
+				saveButton.onclick = saveData.bind(this, data, callback);
+				cancelButton.onclick = clearPopUp.bind();
+				div.style.display = 'block';
+			},
+			onEdit : function(data, callback) {
+				var span = document.getElementById('operation');
+				var idInput = document.getElementById('node-id');
+				var labelInput = document.getElementById('node-label');
+				var saveButton = document.getElementById('saveButton');
+				var cancelButton = document.getElementById('cancelButton');
+				var div = document.getElementById('network-popUp');
+				span.innerHTML = "Edit Node";
+				idInput.value = data.id;
+				labelInput.value = data.label;
+				saveButton.onclick = saveData.bind(this, data, callback);
+				cancelButton.onclick = clearPopUp.bind();
+				div.style.display = 'block';
+			},
+			onConnect : function(data, callback) {
+
+				alert("Edging :" + JSON.stringify(data));
+				
+				var saveButton = document.getElementById('saveRelateButton');
+				var cancelButton = document
+						.getElementById('cancelRelateButton');
+				var div = document.getElementById('relation-popUp');
+				div.style.display = 'block';
+				var relate = document.getElementById('myselect');
+				saveButton.onclick = saveRelateData.bind(this, data, callback);
+				cancelButton.onclick = clearRelationPopUp.bind();
+			}
+		};
+		network = new vis.Network(container, data, options);
+
+		// add event listeners
+		network.on('select', function(params) {
+			document.getElementById('selection').innerHTML = 'Selection: '
+					+ params.nodes;
+		});
+
+		network.on("resize", function(params) {
+			console.log(params.width, params.height)
+		});
+
+		function clearPopUp() {
+			var saveButton = document.getElementById('saveButton');
+			var cancelButton = document.getElementById('cancelButton');
+			saveButton.onclick = null;
+			cancelButton.onclick = null;
+			var div = document.getElementById('network-popUp');
+			div.style.display = 'none';
+
+		}
+
+		function clearRelationPopUp() {
+			var saveButton = document.getElementById('saveRelateButton');
+			var cancelButton = document.getElementById('cancelRelateButton');
+			saveButton.onclick = null;
+			cancelButton.onclick = null;
+			var div = document.getElementById('relation-popUp');
+			div.style.display = 'none';
+
+		}
+
+		function saveRelateData(data, callback) {
+			//var x = document.getElementByName("relation");
+			var radios = document.getElementsByName('relation');
+
+			for ( var i = 0, length = radios.length; i < length; i++) {
+				if (radios[i].checked) {
+					data.label = radios[i].value;
+					data.action = 'save';
+					alert(JSON.stringify(data));
+					break;
+				}
+			}
+
+			if (data.from == data.to) {
+				var r = confirm("Do you want to connect the node to itself?");
+				if (r == true) {
+					callback(data);
+				}
+			} else {
+				callback(data);
+			}
+			var div = document.getElementById('relation-popUp');
+			div.style.display = 'none';
+		}
+
+		function saveData(data, callback) {
+			var idInput = document.getElementById('node-id');
+			var labelInput = document.getElementById('node-label');
+			var nameInput = document.getElementById('node-name');
+			var div = document.getElementById('network-popUp');
+			data.id = idInput.value;
+			data.label = labelInput.value;
+			data.name = nameInput.value;
+
+			var str = JSON.stringify(data);
+			alert("onSave :" + data + "str :" + str);
+
+			dataArray.push(data);
+
+			alert("Data length :" + dataArray.length);
+
+			clearPopUp();
+			callback(data);
+		}
+	}
+
+	function sendDataToServer() {
+		alert("sending to Server :" + dataArray)
+		/* alert(${pageContext.request.contextPath});
+		$.ajax({
+		      type: "POST",
+		      contentType : 'application/json; charset=utf-8',
+		      dataType : 'json',
+		      url: "/gDirecotry/ajax/searchUserProfiles.htm",
+		      data: JSON.stringify(dataArray), // Note it is important
+		      success :function(result) {
+		       
+		     }
+		  }); */
+	}
+</script>
+</head>
+
+<body onload="draw();">
+	<table>
+		<tr>
+			<td>
+				<div id="network-popUp">
+					<span id="operation">node</span> <br>
+					<table style="margin: auto;">
+						<tr>
+							<td>id</td>
+							<td><input id="node-id" value="new value">
+							</td>
+						</tr>
+						<tr>
+							<td>label</td>
+							<td><input id="node-label" value="new value"></td>
+						</tr>
+						<tr>
+							<td>Name</td>
+							<td><input id="node-name" value="new value"></td>
+						</tr>
+					</table>
+					<input type="button" value="save" id="saveButton">
+					</button>
+					<input type="button" value="cancel" id="cancelButton">
+					</button>
+				</div> <br />
+				<div id="relation-popUp">
+					<span id="RelationNext">Choose Relation</span> <br> <input
+						type="radio" name="relation" value="Father" checked>Father</input>
+					<input type="radio" name="relation" value="Mother" id="myselect">Mother</input>
+					<input type="radio" name="relation" value="sister">sister</input> <input
+						type="radio" name="relation" value="Brother">Brother</input> <input
+						type="radio" name="relation" value="Spouse">Spouse</input> <input
+						type="button" value="save" id="saveRelateButton">
+					</button>
+					<input type="button" value="cancel" id="cancelRelateButton">
+					</button>
+				</div>
+				<div id="mynetwork"></div>
+
+				<p id="selection"></p></td>
+			<td><input type="button" value="Save"
+				onclick="sendDataToServer()" /> <!-- 
+				<div class="container">
+					<div class="header">Selected DVDs - ADDED AREA</div>
+					<ul id="gallery" class="dvdlist">
+						<li><span class="fl">DVD 1</span><a href="#"
+							title="remove this dvd" class="ui-icon ui-icon-trash">Delete
+								dvd</a></li>
+						<li><span class="fl">DVD 2</span><a href="#"
+							title="remove this dvd" class="ui-icon ui-icon-trash">Delete
+								dvd</a></li>
+						<li><span class="fl">DVD 3</span><a href="#"
+							title="remove this dvd" class="ui-icon ui-icon-trash">Delete
+								dvd</a></li>
+					</ul>
+				</div> <br>
+
+				<div class="containerTwo">
+
+					<div class="header">Un-selected DVDs - REMOVED AREA</div>
+					<ul id="trash" class="dvdlist">
+						<li><span class="fl">DVD 4</span><a href="#"
+							title="add this dvd back" class="ui-icon ui-icon-plus">add
+								dvd</a></li>
+						<li><span class="fl">DVD 5</span><a href="#"
+							title="add this dvd back" class="ui-icon ui-icon-plus">add
+								dvd</a></li>
+						<li><span class="fl">DVD 6</span><a href="#"
+							title="add this dvd back" class="ui-icon ui-icon-plus">add
+								dvd</a></li>
+					</ul>
+				</div> -->
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
+
